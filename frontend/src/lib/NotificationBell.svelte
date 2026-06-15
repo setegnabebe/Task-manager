@@ -19,14 +19,14 @@
   }
 
   async function loadNotifications() {
-    const res = await fetch('http://localhost:3000/notifications', {
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/notifications', {
       headers: authHeaders(),
     });
     notifications = await res.json();
   }
 
   async function markRead(id: number) {
-    await fetch(`http://localhost:3000/notifications/${id}/read`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/notifications/${id}/read`, {
       method: 'PATCH',
       headers: authHeaders(),
     });
@@ -34,7 +34,7 @@
   }
 
   async function markAllRead() {
-    await fetch('http://localhost:3000/notifications/read/all', {
+    await fetch('https://task-manager-eta-ten-24.vercel.app/notifications/read/all', {
       method: 'PATCH',
       headers: authHeaders(),
     });

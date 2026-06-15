@@ -51,24 +51,24 @@
   function logout() { localStorage.clear(); window.location.href = '/login'; }
 
   async function loadTasks() {
-    const res = await fetch('http://localhost:3000/tasks/all', { headers: authHeaders() });
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/tasks/all', { headers: authHeaders() });
     if (res.status === 401 || res.status === 403) { window.location.href = '/login'; return; }
     tasks = await res.json();
   }
 
   async function loadUsers() {
-    const res = await fetch('http://localhost:3000/auth/users', { headers: authHeaders() });
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/auth/users', { headers: authHeaders() });
     users = await res.json();
   }
 
   async function loadActivity() {
-    const res = await fetch('http://localhost:3000/activity', { headers: authHeaders() });
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/activity', { headers: authHeaders() });
     activities = await res.json();
   }
 
   async function createTask() {
     if (!newTaskTitle.trim()) return;
-    await fetch('http://localhost:3000/tasks', {
+    await fetch('https://task-manager-eta-ten-24.vercel.app/tasks', {
       method: 'POST', headers: authHeaders(),
       body: JSON.stringify({
         title: newTaskTitle,
@@ -83,28 +83,28 @@
   }
 
   async function updateStatus(id: number, status: string) {
-    await fetch(`http://localhost:3000/tasks/${id}`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }),
     });
     await loadTasks();
   }
 
   async function updatePriority(id: number, priority: string) {
-    await fetch(`http://localhost:3000/tasks/${id}/priority`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}/priority`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ priority }),
     });
     await loadTasks();
   }
 
   async function updateDueDate(id: number, dueDate: string) {
-    await fetch(`http://localhost:3000/tasks/${id}/due-date`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}/due-date`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ dueDate }),
     });
     await loadTasks();
   }
 
   async function deleteTask(id: number) {
-    await fetch(`http://localhost:3000/tasks/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}`, { method: 'DELETE', headers: authHeaders() });
     await loadTasks();
   }
 
@@ -115,7 +115,7 @@
   async function saveTaskTitle(id: number) {
     const title = editTaskTitle[id];
     if (!title?.trim()) return;
-    await fetch(`http://localhost:3000/tasks/${id}/title`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}/title`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ title }),
     });
     editingTask[id] = false; await loadTasks();
@@ -124,21 +124,21 @@
   async function createSubtask(taskId: number) {
     const title = newSubtaskTitle[taskId];
     if (!title?.trim()) return;
-    await fetch(`http://localhost:3000/tasks/${taskId}/subtasks`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${taskId}/subtasks`, {
       method: 'POST', headers: authHeaders(), body: JSON.stringify({ title }),
     });
     newSubtaskTitle[taskId] = ''; await loadTasks();
   }
 
   async function deleteSubtask(id: number) {
-    await fetch(`http://localhost:3000/tasks/subtasks/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/subtasks/${id}`, { method: 'DELETE', headers: authHeaders() });
     await loadTasks();
   }
 
   async function createUser() {
     userError = ''; userSuccess = '';
     if (!newUsername.trim() || !newPassword.trim()) { userError = 'Username and password required'; return; }
-    const res = await fetch('http://localhost:3000/auth/users', {
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/auth/users', {
       method: 'POST', headers: authHeaders(),
       body: JSON.stringify({ username: newUsername, password: newPassword, role: newRole }),
     });
@@ -149,14 +149,14 @@
   }
 
   async function deleteUser(id: number) {
-    await fetch(`http://localhost:3000/auth/users/${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/auth/users/${id}`, { method: 'DELETE', headers: authHeaders() });
     await loadUsers();
   }
 
   async function changePassword() {
     settingsMsg = ''; settingsError = '';
     if (!oldPassword || !newSettingsPassword) { settingsError = 'Fill in both fields'; return; }
-    const res = await fetch('http://localhost:3000/auth/change-password', {
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/auth/change-password', {
       method: 'PATCH', headers: authHeaders(),
       body: JSON.stringify({ oldPassword, newPassword: newSettingsPassword }),
     });
@@ -165,7 +165,7 @@
   }
 
   async function reassignTask(taskId: number, assigneeId: number) {
-    await fetch(`http://localhost:3000/tasks/${taskId}/assignee`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${taskId}/assignee`, {
      method: 'PATCH',
      headers: authHeaders(),
      body: JSON.stringify({ assigneeId }),

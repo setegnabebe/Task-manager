@@ -27,20 +27,20 @@
   async function loadTasks() {
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = '/login'; return; }
-    const res = await fetch('http://localhost:3000/tasks', { headers: authHeaders() });
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/tasks', { headers: authHeaders() });
     if (res.status === 401) { window.location.href = '/login'; return; }
     tasks = await res.json();
   }
 
   async function updateStatus(id: number, status: string) {
-    await fetch(`http://localhost:3000/tasks/${id}`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }),
     });
     await loadTasks();
   }
 
   async function updateSubtaskStatus(id: number, status: string) {
-    await fetch(`http://localhost:3000/tasks/subtasks/${id}`, {
+    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/subtasks/${id}`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }),
     });
     await loadTasks();
@@ -51,7 +51,7 @@
   async function changePassword() {
     settingsMsg = ''; settingsError = '';
     if (!oldPassword || !newPassword) { settingsError = 'Fill in both fields'; return; }
-    const res = await fetch('http://localhost:3000/auth/change-password', {
+    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/auth/change-password', {
       method: 'PATCH', headers: authHeaders(),
       body: JSON.stringify({ oldPassword, newPassword }),
     });
@@ -68,7 +68,7 @@
     await loadTasks();
     const token = await requestNotificationPermission();
     if (token) {
-      await fetch('http://localhost:3000/auth/fcm-token', {
+      await fetch('https://task-manager-eta-ten-24.vercel.app/auth/fcm-token', {
         method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ token }),
       });
     }

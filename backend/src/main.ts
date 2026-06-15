@@ -4,10 +4,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'https://task-manager-eta-ten-24.vercel.app',
-  ];
+  const allowedOrigins = ['https://task-manager-eta-ten-24.vercel.app'];
 
   app.enableCors({
     origin: (origin, callback) => {
