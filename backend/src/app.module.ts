@@ -16,14 +16,15 @@ import { ActivityLog } from './activity/activity-log.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'localdb',
-      database: 'taskmanager',
-      entities: [Task, Subtask, User, Notification, ActivityLog],
-      synchronize: true,
+      url: process.env.DATABASE_URL,
+      autoLoadEntities: true,
+      synchronize: false,
+      ssl:
+        process.env.NODE_ENV === 'production'
+          ? { rejectUnauthorized: false }
+          : false,
     }),
+
     TasksModule,
     AuthModule,
     NotificationsModule,
