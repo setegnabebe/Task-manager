@@ -18,6 +18,18 @@ import { Role } from './roles.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // Public registration endpoint
+  @Post('register')
+  register(
+    @Body()
+    body: {
+      username: string;
+      password: string;
+    },
+  ) {
+    return this.authService.createUser(body.username, body.password, 'user');
+  }
+
   @Post('login')
   login(@Body() body: { username: string; password: string }) {
     return this.authService.login(body.username, body.password);
@@ -25,7 +37,10 @@ export class AuthController {
 
   @Patch('fcm-token')
   @UseGuards(JwtAuthGuard)
-  updateFcmToken(@Request() req: any, @Body() body: { token: string }) {
+  updateFcmToken(
+    @Request() req: { user: { id: number } },
+    @Body() body: { token: string },
+  ) {
     return this.authService.updateFcmToken(req.user.id, body.token);
   }
 
@@ -33,7 +48,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   changePassword(
     @Request() req: { user: { id: number } },
-    @Body() body: { oldPassword: string; newPassword: string },
+    @Body()
+    body: {
+      oldPassword: string;
+      newPassword: string;
+    },
   ) {
     return this.authService.changePassword(
       req.user.id,
@@ -46,9 +65,15 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Role('admin')
   createUser(
-    @Body() body: { username: string; password: string; role?: string },
+    @Body()
+    body: {
+      username: string;
+      password: string;
+      role?: string;
+    },
   ) {
     const role = body.role ?? 'user';
+
     return this.authService.createUser(body.username, body.password, role);
   }
 
