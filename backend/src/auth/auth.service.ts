@@ -9,6 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 
+async function createUser(username: string, password: string, role: string = 'user') {
+  // This function should be implemented in the controller or service
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,17 +21,22 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(username: string, password: string) {
-    const existing = await this.usersRepository.findOneBy({ username });
-    if (existing) throw new ConflictException('Username already taken');
+  // async register(username: string, password: string) {
+  //   const existing = await this.usersRepository.findOneBy({ username });
+  //   if (existing) throw new ConflictException('Username already taken');
 
-    const hashed = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({
-      username,
-      password: hashed,
-    } as any);
-    await this.usersRepository.save(user);
-    return { message: 'User created successfully' };
+  //   const hashed = await bcrypt.hash(password, 10);
+  //   const user = this.usersRepository.create({
+  //     username,
+  //     password: hashed,
+  //   } as any);
+  //   await this.usersRepository.save(user);
+  //   return { message: 'User created successfully' };
+  // }
+
+  @Post('register')
+  register(@Body() body: { username: string; password: string; role?: string }) {
+    return this.authService.createUser(body.username, body.password, body.role ?? 'user');
   }
 
   async login(username: string, password: string) {
