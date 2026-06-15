@@ -9,10 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 
-async function createUser(username: string, password: string, role: string = 'user') {
-  // This function should be implemented in the controller or service
-}
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,24 +16,6 @@ export class AuthService {
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
-
-  // async register(username: string, password: string) {
-  //   const existing = await this.usersRepository.findOneBy({ username });
-  //   if (existing) throw new ConflictException('Username already taken');
-
-  //   const hashed = await bcrypt.hash(password, 10);
-  //   const user = this.usersRepository.create({
-  //     username,
-  //     password: hashed,
-  //   } as any);
-  //   await this.usersRepository.save(user);
-  //   return { message: 'User created successfully' };
-  // }
-
-  @Post('register')
-  register(@Body() body: { username: string; password: string; role?: string }) {
-    return this.authService.createUser(body.username, body.password, body.role ?? 'user');
-  }
 
   async login(username: string, password: string) {
     const user = await this.usersRepository.findOneBy({ username });
@@ -52,10 +30,6 @@ export class AuthService {
       role: user.role,
       username: user.username,
     };
-  }
-  async updateFcmToken(userId: number, token: string) {
-    await this.usersRepository.update(userId, { fcmtoken: token });
-    return { success: true };
   }
 
   async createUser(username: string, password: string, role: string = 'user') {
@@ -81,11 +55,13 @@ export class AuthService {
     await this.usersRepository.delete(id);
     return { success: true };
   }
-  async changePassword(
-    userId: number,
-    oldPassword: string,
-    newPassword: string,
-  ) {
+
+  async updateFcmToken(userId: number, token: string) {
+    await this.usersRepository.update(userId, { fcmtoken: token });
+    return { success: true };
+  }
+
+  async changePassword(userId: number, oldPassword: string, newPassword: string) {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('User not found');
     const valid = await bcrypt.compare(oldPassword, user.password);

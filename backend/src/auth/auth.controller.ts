@@ -18,16 +18,16 @@ import { Role } from './roles.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // Public registration endpoint
   @Post('register')
   register(
     @Body()
     body: {
       username: string;
       password: string;
+      role?: string;
     },
   ) {
-    return this.authService.createUser(body.username, body.password, 'user');
+    return this.authService.createUser(body.username, body.password, body.role ?? 'user');
   }
 
   @Post('login')
@@ -73,7 +73,6 @@ export class AuthController {
     },
   ) {
     const role = body.role ?? 'user';
-
     return this.authService.createUser(body.username, body.password, role);
   }
 
