@@ -26,7 +26,7 @@
 
   async function loadTasks() {
     const token = localStorage.getItem('token');
-    if (!token) { window.location.href = '/login'; return; }
+    if (!token) { window.location.href = '/register'; return; }
     const res = await fetch('https://task-manager-eta-ten-24.vercel.app/tasks', { headers: authHeaders() });
     if (res.status === 401) { window.location.href = '/login'; return; }
     tasks = await res.json();
