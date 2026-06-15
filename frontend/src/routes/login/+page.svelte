@@ -72,6 +72,10 @@
     </div>
 
     <button class="login-btn" onclick={login}>Sign in</button>
+    <p>
+  Don't have an account?{" "}
+  <a href="/register">Create Account</a>
+</p>
   </div>
 </main>
 
@@ -80,26 +84,31 @@
 
   :global(body) { margin: 0; background: #f0f2f5; }
 
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #1e1e2e 0%, #313244 100%);
-  }
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh; /* better for mobile browsers */
+  padding: 1rem;
+  background: linear-gradient(135deg, #1e1e2e 0%, #313244 100%);
+}
 
-  .card {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
+.card {
+  background: white;
+  width: 100%;
+  max-width: 400px;
 
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  padding: 2rem;
+  border-radius: 16px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  box-sizing: border-box;
+}
   .logo {
     display: flex;
     align-items: center;
@@ -120,7 +129,9 @@
     font-weight: bold;
   }
 
-  h1 { margin: 0; font-size: 22px; font-weight: 700; color: #111827; font-family: sans-serif; }
+  h1 { margin: 0; font-size: 22px; font-weight: 700; color: #111827; font-family: sans-serif; 
+      font-size: 1.2rem;
+}
 
   .subtitle { margin: 0; font-size: 14px; color: #6b7280; font-family: sans-serif; }
 
@@ -206,4 +217,117 @@
 
   .login-btn:hover { background: #6d28d9; }
   .login-btn:active { transform: scale(0.98); }
+
+  /* ==========================================
+   TABLET
+   ========================================== */
+
+@media (max-width: 768px) {
+  main {
+    padding: 1rem;
+  }
+
+  .card {
+    max-width: 100%;
+    padding: 1.5rem;
+    border-radius: 14px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .logo-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+}
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 480px) {
+  main {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    gap: 1rem;
+    border-radius: 12px;
+  }
+
+  .logo {
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  h1 {
+    font-size: 1.15rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  label {
+    font-size: 12px;
+  }
+
+  input {
+    font-size: 14px;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 14px;
+  }
+
+  .alert {
+    font-size: 13px;
+    padding: 0.7rem;
+  }
+}
+
+/* ==========================================
+   VERY SMALL DEVICES
+   ========================================== */
+
+@media (max-width: 360px) {
+  .card {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1rem;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  input {
+    font-size: 13px;
+  }
+
+  .login-btn {
+    font-size: 13px;
+  }
+}
 </style>
