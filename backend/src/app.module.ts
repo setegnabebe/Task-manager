@@ -1,36 +1,23 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TasksModule } from './tasks/tasks.module';
-import { AuthModule } from './auth/auth.module';
-import { Task } from './tasks/task.entity';
-import { Subtask } from './tasks/subtask.entity';
-import { User } from './auth/user.entity';
-import { Notification } from './notifications/notification.entity';
-import { NotificationsModule } from './notifications/notifications.module';
-import { ActivityModule } from './activity/activity.module';
-import { ActivityLog } from './activity/activity-log.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { User } from './user.entity';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
-      autoLoadEntities: true,
-      synchronize: false,
-      ssl:
-        process.env.NODE_ENV === 'production'
-          ? { rejectUnauthorized: false }
-          : false,
+    TypeOrmModule.forFeature([User]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: 'your_jwt_secret_key',
+      signOptions: { expiresIn: '7d' },
     }),
-
-    TasksModule,
-    AuthModule,
-    NotificationsModule,
-    ActivityModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [AuthService, JwtStrategy],
+  controllers: [AuthController],
+  exports: [JwtModule, JwtStrategy, PassportModule],
 })
-export class AppModule {}
+export class AuthModule {}
