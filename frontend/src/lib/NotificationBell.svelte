@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { API_URL } from '$lib/config';
   import { onMount } from 'svelte';
 
   interface Notification {
@@ -19,14 +20,14 @@
   }
 
   async function loadNotifications() {
-    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/notifications', {
+    const res = await fetch(`${API_URL}/notifications`, {
       headers: authHeaders(),
     });
     notifications = await res.json();
   }
 
   async function markRead(id: number) {
-    await fetch(`https://task-manager-eta-ten-24.vercel.app/notifications/${id}/read`, {
+    await fetch(`${API_URL}/notifications/${id}/read`, {
       method: 'PATCH',
       headers: authHeaders(),
     });
@@ -34,7 +35,7 @@
   }
 
   async function markAllRead() {
-    await fetch('https://task-manager-eta-ten-24.vercel.app/notifications/read/all', {
+    await fetch(`${API_URL}/notifications/read/all`, {
       method: 'PATCH',
       headers: authHeaders(),
     });

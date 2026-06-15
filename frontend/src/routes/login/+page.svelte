@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { API_URL } from '$lib/config';
   let username = $state('');
   let password = $state('');
   let error = $state('');
@@ -6,7 +7,7 @@
 
   async function login() {
     error = '';
-    const res = await fetch('https://task-manager-jwvg.onrender.com/auth/login', {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -29,6 +30,7 @@
     }
   }
 </script>
+
 
 <main>
   <div class="card">

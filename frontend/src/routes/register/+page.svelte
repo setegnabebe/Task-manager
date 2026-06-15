@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { API_URL } from '$lib/config';
   let username = $state('');
   let password = $state('');
   let error = $state('');
@@ -7,7 +8,7 @@
   async function register() {
     error = '';
     success = '';
-    const res = await fetch('https://task-manager-jwvg.onrender.com/auth/register', {
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -23,6 +24,7 @@
     setTimeout(() => window.location.href = '/login', 1500);
   }
 </script>
+
 
 <main>
   <div class="card">

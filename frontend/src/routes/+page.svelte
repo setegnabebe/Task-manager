@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import NotificationBell from '$lib/NotificationBell.svelte';
   import { requestNotificationPermission, onForegroundMessage } from '$lib/firebase';
+  import { API_URL } from '$lib/config';
 
   interface Subtask { id: number; title: string; status: string }
   interface Task { id: number; title: string; status: string; subtasks: Subtask[] }
@@ -27,20 +28,20 @@
   async function loadTasks() {
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = '/register'; return; }
-    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/tasks', { headers: authHeaders() });
+    const res = await fetch(`${API_URL}/tasks`, { headers: authHeaders() });
     if (res.status === 401) { window.location.href = '/login'; return; }
     tasks = await res.json();
   }
 
   async function updateStatus(id: number, status: string) {
-    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/${id}`, {
+    await fetch(`${API_URL}/tasks/${id}`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }),
     });
     await loadTasks();
   }
 
   async function updateSubtaskStatus(id: number, status: string) {
-    await fetch(`https://task-manager-eta-ten-24.vercel.app/tasks/subtasks/${id}`, {
+    await fetch(`${API_URL}/tasks/subtasks/${id}`, {
       method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }),
     });
     await loadTasks();
@@ -51,7 +52,7 @@
   async function changePassword() {
     settingsMsg = ''; settingsError = '';
     if (!oldPassword || !newPassword) { settingsError = 'Fill in both fields'; return; }
-    const res = await fetch('https://task-manager-eta-ten-24.vercel.app/auth/change-password', {
+    const res = await fetch(`${API_URL}/auth/change-password`, {
       method: 'PATCH', headers: authHeaders(),
       body: JSON.stringify({ oldPassword, newPassword }),
     });
@@ -68,7 +69,7 @@
     await loadTasks();
     const token = await requestNotificationPermission();
     if (token) {
-      await fetch('https://task-manager-eta-ten-24.vercel.app/auth/fcm-token', {
+      await fetch(`${API_URL}/auth/fcm-token`, {
         method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ token }),
       });
     }
