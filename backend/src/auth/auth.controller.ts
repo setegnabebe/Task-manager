@@ -24,10 +24,9 @@ export class AuthController {
     body: {
       username: string;
       password: string;
-      role?: string;
     },
   ) {
-    return this.authService.createUser(body.username, body.password, body.role ?? 'user');
+    return this.authService.createUser(body.username, body.password, 'user');
   }
 
   @Post('login')
