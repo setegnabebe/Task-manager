@@ -1,36 +1,32 @@
 <script lang="ts">
   import { API_URL } from '$lib/config';
+
   let username = $state('');
   let password = $state('');
   let error = $state('');
   let showPassword = $state(false);
+  let loading = $state(false);
 
   async function login() {
     error = '';
+    loading = true;
     const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
+    loading = false;
 
-    if (!res.ok) {
-      error = 'Invalid username or password';
-      return;
-    }
+    if (!res.ok) { error = 'Invalid username or password'; return; }
 
     const data = await res.json();
     localStorage.setItem('token', data.access_token);
     localStorage.setItem('role', data.role);
     localStorage.setItem('username', data.username);
 
-    if (data.role === 'admin') {
-      window.location.href = '/admin';
-    } else {
-      window.location.href = '/';
-    }
+    window.location.href = data.role === 'admin' ? '/admin' : '/';
   }
 </script>
-
 
 <main>
   <div class="card">
@@ -41,9 +37,7 @@
     <p class="subtitle">Sign in to your account</p>
 
     {#if error}
-      <div class="alert">
-        <span>⚠</span> {error}
-      </div>
+      <div class="alert"><span>⚠</span> {error}</div>
     {/if}
 
     <div class="field">
@@ -55,65 +49,59 @@
     <div class="field">
       <label>Password</label>
       <div class="password-wrap">
-        <input
-          bind:value={password}
-          type={showPassword ? 'text' : 'password'}
+        <input bind:value={password} type={showPassword ? 'text' : 'password'}
           placeholder="Enter your password"
-          onkeydown={(e) => e.key === 'Enter' && login()}
-        />
+          onkeydown={(e) => e.key === 'Enter' && login()} />
         <button class="eye-btn" onclick={() => showPassword = !showPassword} type="button">
-          {#if showPassword}
-            <i class="ti ti-eye-off"></i>
-          {:else}
-            <i class="ti ti-eye"></i>
-          {/if}
+          <i class="ti ti-{showPassword ? 'eye-off' : 'eye'}"></i>
         </button>
       </div>
     </div>
 
-    <button class="login-btn" onclick={login}>Sign in</button>
-    <p>
-  Don't have an account?{" "}
-  <a href="/register">Create Account</a>
-</p>
+    <button class="submit-btn" onclick={login} disabled={loading}>
+      {#if loading}
+        <span class="spinner"></span> Signing in...
+      {:else}
+        Sign in
+      {/if}
+    </button>
+
+    <p class="footer-link">Don't have an account? <a href="/register">Create account</a></p>
   </div>
 </main>
 
 <style>
   @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
 
-  :global(body) { margin: 0; background: #f0f2f5; }
+  :global(body) { margin: 0; }
 
-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100dvh; /* better for mobile browsers */
-  padding: 1rem;
-  background: linear-gradient(135deg, #1e1e2e 0%, #313244 100%);
-}
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100dvh;
+    padding: 1rem;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #1e1e2e 0%, #313244 100%);
+  }
 
-.card {
-  background: white;
-  width: 100%;
-  max-width: 400px;
+  .card {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 2.25rem;
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    box-sizing: border-box;
+  }
 
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-
-  padding: 2rem;
-  border-radius: 16px;
-
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-
-  box-sizing: border-box;
-}
   .logo {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 0.25rem;
   }
 
   .logo-icon {
@@ -127,11 +115,10 @@ main {
     color: white;
     font-size: 18px;
     font-weight: bold;
+    flex-shrink: 0;
   }
 
-  h1 { margin: 0; font-size: 22px; font-weight: 700; color: #111827; font-family: sans-serif; 
-      font-size: 1.2rem;
-}
+  h1 { margin: 0; font-size: 20px; font-weight: 700; color: #111827; font-family: sans-serif; }
 
   .subtitle { margin: 0; font-size: 14px; color: #6b7280; font-family: sans-serif; }
 
@@ -145,26 +132,23 @@ main {
     align-items: center;
     gap: 8px;
     font-family: sans-serif;
+    border: 1px solid #fecaca;
   }
 
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
 
   label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #374151;
     font-family: sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
   }
 
   input {
     width: 100%;
-    padding: 0.6rem 0.85rem;
+    padding: 0.65rem 0.875rem;
     border: 1.5px solid #e5e7eb;
     border-radius: 8px;
     font-size: 14px;
@@ -173,17 +157,13 @@ main {
     transition: border 0.15s, box-shadow 0.15s;
     box-sizing: border-box;
     font-family: sans-serif;
+    background: white;
   }
 
   input:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px #7c3aed18; }
 
-  .password-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .password-wrap input { padding-right: 2.75rem; width: 100%; }
+  .password-wrap { position: relative; display: flex; align-items: center; }
+  .password-wrap input { padding-right: 2.75rem; }
 
   .eye-btn {
     position: absolute;
@@ -198,136 +178,58 @@ main {
     padding: 0;
     transition: color 0.15s;
   }
-
   .eye-btn:hover { color: #7c3aed; }
 
-  .login-btn {
+  .submit-btn {
     background: #7c3aed;
     color: white;
     border: none;
     border-radius: 10px;
-    padding: 0.75rem;
+    padding: 0.8rem;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    transition: background 0.15s, transform 0.1s, opacity 0.15s;
     font-family: sans-serif;
-    margin-top: 0.25rem;
-  }
-
-  .login-btn:hover { background: #6d28d9; }
-  .login-btn:active { transform: scale(0.98); }
-
-  /* ==========================================
-   TABLET
-   ========================================== */
-
-@media (max-width: 768px) {
-  main {
-    padding: 1rem;
-  }
-
-  .card {
-    max-width: 100%;
-    padding: 1.5rem;
-    border-radius: 14px;
-  }
-
-  h1 {
-    font-size: 1.3rem;
-  }
-
-  .logo-icon {
-    width: 34px;
-    height: 34px;
-    font-size: 16px;
-  }
-}
-
-/* ==========================================
-   MOBILE
-   ========================================== */
-
-@media (max-width: 480px) {
-  main {
-    padding: 0.75rem;
-  }
-
-  .card {
-    padding: 1.25rem;
-    gap: 1rem;
-    border-radius: 12px;
-  }
-
-  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
-  }
-
-  .logo-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 15px;
-    border-radius: 8px;
-  }
-
-  h1 {
-    font-size: 1.15rem;
-  }
-
-  .subtitle {
-    font-size: 13px;
-  }
-
-  label {
-    font-size: 12px;
-  }
-
-  input {
-    font-size: 14px;
-    padding: 0.7rem 0.85rem;
-  }
-
-  .login-btn {
     width: 100%;
-    padding: 0.85rem;
-    font-size: 14px;
   }
+  .submit-btn:hover:not(:disabled) { background: #6d28d9; }
+  .submit-btn:active:not(:disabled) { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-  .alert {
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .footer-link {
+    text-align: center;
     font-size: 13px;
-    padding: 0.7rem;
+    color: #6b7280;
+    margin: 0;
+    font-family: sans-serif;
   }
-}
+  .footer-link a { color: #7c3aed; text-decoration: none; font-weight: 500; }
+  .footer-link a:hover { text-decoration: underline; }
 
-/* ==========================================
-   VERY SMALL DEVICES
-   ========================================== */
-
-@media (max-width: 360px) {
-  .card {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 1rem;
+  @media (max-width: 480px) {
+    .card { padding: 1.5rem; gap: 1rem; border-radius: 14px; }
+    h1 { font-size: 18px; }
+    .logo-icon { width: 32px; height: 32px; font-size: 16px; }
   }
 
-  .subtitle {
-    font-size: 12px;
+  @media (max-width: 360px) {
+    main { padding: 0.75rem; }
+    .card { padding: 1.25rem; }
+    h1 { font-size: 16px; }
   }
-
-  .logo-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
-  }
-
-  input {
-    font-size: 13px;
-  }
-
-  .login-btn {
-    font-size: 13px;
-  }
-}
 </style>
